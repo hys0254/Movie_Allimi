@@ -13,7 +13,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
-public class CGV_TENET2_MK2 {
+public class CGV_TENET_MK2{
 
 	// WebDriver
 	private WebDriver driver;
@@ -26,7 +26,7 @@ public class CGV_TENET2_MK2 {
 	public Date today = new Date();
 	public static int alarmCnt_ref = 0;
 
-	public CGV_TENET2_MK2() {
+	public CGV_TENET_MK2() {
 		System.setProperty(WEB_DRIVER_ID, WEB_DRIVER_PATH);
 
 		// Driver SetUp
@@ -34,13 +34,13 @@ public class CGV_TENET2_MK2 {
 		options.addArguments("headless");
 		driver = new ChromeDriver(options);
 		// driver = new ChromeDriver();
-		url = "http://www.cgv.co.kr/common/showtimes/iframeTheater.aspx?"
-				+ "areacode=01&theatercode=0013&date=20200826&screencodes=&screenratingcode=02&regioncode=07";
+		//ÌôïÏù∏Ìï† url
+		url = "http://www.cgv.co.kr/reserve/show-times/?areacode=01&theaterCode=0013&date=20220303";
 	}
 
 	public static void main(String[] args) {
 		while (alarmCnt_ref < 10) {
-			new CGV_TENET2().operate();
+			new CGV_TENET_MK2().operate();
 		}
 	}
 
@@ -57,26 +57,42 @@ public class CGV_TENET2_MK2 {
 
 	public void searchMovie() {
 
-		/* Scanner sc = new Scanner(System.in); */
+		
 
 		driver.get(url);
-		if (driver.getPageSource().contains("≈◊≥›") || driver.getPageSource().contains("TENET")) {
-			System.out.println("TENET ø¿«¬(ªÛøµ«• ¬¸¡∂πˆ¿¸)");
+		boolean check=false;
+		//elementÍ∞Ä iframe ÏïàÏóê ÏûàÏùÑ Í≤ΩÏö∞ xpathÎ°ú ÌôïÏù∏ Î∂àÍ∞Ä
+		//iframeÏúºÎ°ú focusÎ•º ÏòÆÍ≤®ÏïºÎê®.
+		driver.switchTo().frame("ifrm_movie_time_table");
+		
+		try {
+			System.out.println(driver.findElement(By.xpath("html/body/div/div[3]/ul/li[1]/div/div[7]/div[2]/ul/li/a/span[1]")).getText());
+			//ÌôïÏù∏Ìï† elementÏùò xpathÍ∞í ÌôïÏù∏
+			check = driver.findElement(By.xpath("html/body/div/div[3]/ul/li[1]/div/div[7]/div[2]/ul/li/a/span[1]")).getText().equals("Ï§ÄÎπÑÏ§ë");
+			
+		} catch (Exception e) {
+			System.out.println(e);
+			System.out.println("ÏïàÎêò~~");
+		}
+		
+		if (!check) {
+			System.out.println("Ïñ∏ÌÉùÌä∏ ÌÜ° Ï§ÄÎπÑÏ§ë");
 			alarmCnt_ref++;
 
-			// ≈⁄∑π±◊∑• ∏ﬁΩ√¡ˆ ¿¸º€ ∫Œ∫–
-			String Token = "≈‰≈´ ¿‘∑¬";
-			String chat_id = "√™ æ∆¿Ãµ ¿‘∑¬";
-			// ≈◊Ω∫∆ÆøÎ chat_id
-			 //String chat_id = "≈◊Ω∫∆Æ √™ æ∆¿Ãµ";
-			String text = "≈◊≥› øπ∏≈ ø¿«¬!(ªÛøµ«• ¬¸¡∂πˆ¿¸)";
+			// ÌÖîÎ†àÍ∑∏Îû® Î©îÏÑ∏ÏßÄ Ï†ÑÏà≠ Î∂ÄÎ∂Ñ
+			// ÌÜ†ÌÅ∞
+			// chat_id = https://api.telegram.org/bot+[ÌÜ†ÌÅ∞]+/getUpdates ÏúºÎ°ú ÌôïÏù∏
+			String Token = "**************************************************";
+			String chat_id = "*******************";
+			
+			String text = "Ïñ∏ÌÉùÌä∏ÌÜ° Ïò§Ìîà!";
 
 			BufferedReader in = null;
 
 			try {
 
 				URL obj = new URL(
-						"https://api.telegram.org/bot" + Token + "/sendmessage?chat_id=" + chat_id + "&text=" + text); // »£√‚«“
+						"https://api.telegram.org/bot" + Token + "/sendmessage?chat_id=" + chat_id + "&text=" + text); // ÔøΩÏÉáÁï∞ÏíóÎ∏∑
 																														// url
 
 				HttpURLConnection con = (HttpURLConnection) obj.openConnection();
@@ -84,7 +100,7 @@ public class CGV_TENET2_MK2 {
 				in = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8"));
 				String line;
 
-				while ((line = in.readLine()) != null) { // response∏¶ ¬˜∑ ¥Î∑Œ √‚∑¬
+				while ((line = in.readLine()) != null) { 
 					System.out.println(line);
 				}
 
@@ -100,15 +116,15 @@ public class CGV_TENET2_MK2 {
 			}
 
 		} else {
-			System.out.println("TENET ø¿«¬æ»«‘(ªÛøµ«• ¬¸¡∂πˆ¿¸)");
+			System.out.println("Ïñ∏ÌÉùÌä∏ÌÜ° Ïò§Ìîà ÏïàÎê®");
 			System.out.println(today);
 		}
-//	        
+	        
 
 		try {
 			Thread.sleep(5000);
 		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
+			
 			e1.printStackTrace();
 		}
 	}
