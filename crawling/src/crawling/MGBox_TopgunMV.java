@@ -22,7 +22,7 @@ public class MGBox_TopgunMV {
 	// Properties
 	public static String WEB_DRIVER_ID = "webdriver.chrome.driver";
 	public static String WEB_DRIVER_PATH = "C:/chromedriver.exe";
-	public static int peopleCnt_19 = 0;
+	public static int peopleCnt_19 = 35;
 	public static int peopleCnt_22 = 173;
 	public Date today = new Date();
 	public static int alarmCnt_ref = 0;
@@ -74,7 +74,7 @@ public class MGBox_TopgunMV {
 
 	public void waitforit() {
 		try {
-			Thread.sleep(3000);
+			Thread.sleep(1500);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			telegramAlert("오류 발생 확인 요망");
@@ -127,49 +127,60 @@ public class MGBox_TopgunMV {
 
 		// 원하는 영화관 선택
 		WebElement theaterSelector = driver
-				.findElement(By.xpath("/html/body/div[2]/div[3]/div[2]/div[2]/div[5]/div/div/div[1]/button[5]"));
+				.findElement(By.xpath("/html/body/div[2]/div[3]/div[2]/div[2]/div[5]/div/div/div[1]/button[1]"));
 		theaterSelector.click();
 		waitforit();
 
 		// 1. 특정 요일 선택 열림 확인
-//		WebElement daySelector = driver
-//				.findElement(By.xpath("/html/body/div[2]/div[3]/div[2]/div[2]/div[5]/div/div/div[4]/div/div[1]"));
-//		daySelector = daySelector.findElement(By.className("date-area"));
-//		daySelector = daySelector.findElement(By.className("wrap"));
-//		List<WebElement> dayList = daySelector.findElements(By.tagName("button"));
-//		for (WebElement web : dayList) {
-//			if (web.getAttribute("date-data").equals("2022.07.27")) {
-//
-//				daySelector = web;
-//				break;
-//			}
-//		}
-//		// 예매 오픈 탑건 존재 확인
-//		if (!daySelector.getAttribute("class").equals("disabled") && alarmCnt_ref < 10) {
-//			daySelector.click();
-//			waitforit();
-//			WebElement movieListBox = driver
-//					.findElement(By.xpath("/html/body/div[2]/div[3]/div[2]/div[2]/div[5]/div/div/div[6]"));
-//			// 영화 리스트
-//			List<WebElement> movieList = movieListBox.findElements(By.className("theater-list"));
-//			// 해당 리스트 중에 두번째 p태그에 특정 영화가 있는지 확인
-//			for (WebElement movie : movieList) {
-//				String movieText = movie.findElement(By.className("theater-tit")).findElements(By.tagName("p")).get(1)
-//						.getText();
-//				if (movieText.contains("탑건")) {
-//					telegramAlert("[1] 27일 탑건 예매 열림");
-//					alarmCnt_ref++;
-//				}
-//			}
-//		}
-
-		// 2. 특정 날짜 자리수 변환 확인
-		// 화요일 예매 자리 확인
 		WebElement daySelector = driver
 				.findElement(By.xpath("/html/body/div[2]/div[3]/div[2]/div[2]/div[5]/div/div/div[4]/div/div[1]"));
 		daySelector = daySelector.findElement(By.className("date-area"));
 		daySelector = daySelector.findElement(By.className("wrap"));
 		List<WebElement> dayList = daySelector.findElements(By.tagName("button"));
+		for (WebElement web : dayList) {
+			if (web.getAttribute("date-data").equals("2022.07.30")) {
+
+				daySelector = web;
+				break;
+			}
+		}
+		System.out.println(daySelector.getAttribute("class"));
+		// 예매 오픈 탑건 존재 확인
+		if (daySelector.getAttribute("class").equals("sat") && alarmCnt_ref < 10) {
+			daySelector.click();
+			waitforit();
+			WebElement movieListBox = driver
+					.findElement(By.xpath("/html/body/div[2]/div[3]/div[2]/div[2]/div[5]/div/div/div[6]"));
+			// 영화 리스트
+			List<WebElement> movieList = movieListBox.findElements(By.className("theater-list"));
+			// 해당 리스트 중에 두번째 p태그에 특정 영화가 있는지 확인
+			for (WebElement movie : movieList) {
+				String movieText = movie.findElement(By.className("theater-tit")).findElements(By.tagName("p")).get(1)
+						.getText();
+				if (movieText.contains("탑건")) {
+					telegramAlert("[1] 30일 남양주 돌비 시네마 탑건 예매 열림");
+					alarmCnt_ref++;
+				}
+			}
+		}else {
+			System.out.println("활성화 안됨");
+		}
+
+		// 2. 특정 날짜 자리수 변환 확인
+		
+		//코엑스 선택
+		theaterSelector = driver
+				.findElement(By.xpath("/html/body/div[2]/div[3]/div[2]/div[2]/div[5]/div/div/div[1]/button[5]"));
+		theaterSelector.click();
+		waitforit();
+		
+		// 화요일 예매 자리 확인
+		
+		daySelector = driver
+				.findElement(By.xpath("/html/body/div[2]/div[3]/div[2]/div[2]/div[5]/div/div/div[4]/div/div[1]"));
+		daySelector = daySelector.findElement(By.className("date-area"));
+		daySelector = daySelector.findElement(By.className("wrap"));
+		dayList = daySelector.findElements(By.tagName("button"));
 		for (WebElement web : dayList) {
 			if (web.getAttribute("date-data").equals("2022.07.26")) {
 
@@ -207,7 +218,7 @@ public class MGBox_TopgunMV {
 						peopleCnt_19 = peopleCnt;
 
 					}
-					waitforit();
+
 //					if (time.findElement(By.className("time")).getText().equals("22:10")) {
 //						scanOver = true;
 //						int peopleCnt = Integer
