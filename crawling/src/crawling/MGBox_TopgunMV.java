@@ -22,8 +22,8 @@ public class MGBox_TopgunMV {
 	// Properties
 	public static String WEB_DRIVER_ID = "webdriver.chrome.driver";
 	public static String WEB_DRIVER_PATH = "C:/chromedriver.exe";
-	public static int peopleCnt_19 = 73;
-	public static int peopleCnt_22 = 178;
+	public static int peopleCnt_19 = 0;
+	public static int peopleCnt_22 = 173;
 	public Date today = new Date();
 	public static int alarmCnt_ref = 0;
 
@@ -86,6 +86,7 @@ public class MGBox_TopgunMV {
 		// 토큰
 		// chat_id = https://api.telegram.org/bot+[토큰]+/getUpdates 으로 확인
 		
+		
 
 		BufferedReader in = null;
 
@@ -131,44 +132,44 @@ public class MGBox_TopgunMV {
 		waitforit();
 
 		// 1. 특정 요일 선택 열림 확인
+//		WebElement daySelector = driver
+//				.findElement(By.xpath("/html/body/div[2]/div[3]/div[2]/div[2]/div[5]/div/div/div[4]/div/div[1]"));
+//		daySelector = daySelector.findElement(By.className("date-area"));
+//		daySelector = daySelector.findElement(By.className("wrap"));
+//		List<WebElement> dayList = daySelector.findElements(By.tagName("button"));
+//		for (WebElement web : dayList) {
+//			if (web.getAttribute("date-data").equals("2022.07.27")) {
+//
+//				daySelector = web;
+//				break;
+//			}
+//		}
+//		// 예매 오픈 탑건 존재 확인
+//		if (!daySelector.getAttribute("class").equals("disabled") && alarmCnt_ref < 10) {
+//			daySelector.click();
+//			waitforit();
+//			WebElement movieListBox = driver
+//					.findElement(By.xpath("/html/body/div[2]/div[3]/div[2]/div[2]/div[5]/div/div/div[6]"));
+//			// 영화 리스트
+//			List<WebElement> movieList = movieListBox.findElements(By.className("theater-list"));
+//			// 해당 리스트 중에 두번째 p태그에 특정 영화가 있는지 확인
+//			for (WebElement movie : movieList) {
+//				String movieText = movie.findElement(By.className("theater-tit")).findElements(By.tagName("p")).get(1)
+//						.getText();
+//				if (movieText.contains("탑건")) {
+//					telegramAlert("[1] 27일 탑건 예매 열림");
+//					alarmCnt_ref++;
+//				}
+//			}
+//		}
+
+		// 2. 특정 날짜 자리수 변환 확인
+		// 화요일 예매 자리 확인
 		WebElement daySelector = driver
 				.findElement(By.xpath("/html/body/div[2]/div[3]/div[2]/div[2]/div[5]/div/div/div[4]/div/div[1]"));
 		daySelector = daySelector.findElement(By.className("date-area"));
 		daySelector = daySelector.findElement(By.className("wrap"));
 		List<WebElement> dayList = daySelector.findElements(By.tagName("button"));
-		for (WebElement web : dayList) {
-			if (web.getAttribute("date-data").equals("2022.07.27")) {
-
-				daySelector = web;
-				break;
-			}
-		}
-		// 예매 오픈 탑건 존재 확인
-		if (!daySelector.getAttribute("class").equals("disabled") && alarmCnt_ref < 10) {
-			daySelector.click();
-			waitforit();
-			WebElement movieListBox = driver
-					.findElement(By.xpath("/html/body/div[2]/div[3]/div[2]/div[2]/div[5]/div/div/div[6]"));
-			// 영화 리스트
-			List<WebElement> movieList = movieListBox.findElements(By.className("theater-list"));
-			// 해당 리스트 중에 두번째 p태그에 특정 영화가 있는지 확인
-			for (WebElement movie : movieList) {
-				String movieText = movie.findElement(By.className("theater-tit")).findElements(By.tagName("p")).get(1)
-						.getText();
-				if (movieText.contains("탑건")) {
-					telegramAlert("[1] 27일 탑건 예매 열림");
-					alarmCnt_ref++;
-				}
-			}
-		}
-
-		// 2. 특정 날짜 자리수 변환 확인
-		// 화요일 예매 자리 확인
-		daySelector = driver
-				.findElement(By.xpath("/html/body/div[2]/div[3]/div[2]/div[2]/div[5]/div/div/div[4]/div/div[1]"));
-		daySelector = daySelector.findElement(By.className("date-area"));
-		daySelector = daySelector.findElement(By.className("wrap"));
-		dayList = daySelector.findElements(By.tagName("button"));
 		for (WebElement web : dayList) {
 			if (web.getAttribute("date-data").equals("2022.07.26")) {
 
@@ -196,26 +197,27 @@ public class MGBox_TopgunMV {
 				for (WebElement time : timeList) {
 
 					if (time.findElement(By.className("time")).getText().equals("19:20")) {
+						scanOver=true;
 						int peopleCnt = Integer
 								.parseInt(time.findElement(By.className("chair")).getText().replaceAll("[^0-9]", ""));
 						System.out.println(peopleCnt);
-						if (peopleCnt != peopleCnt_19) {
-							telegramAlert("[2.1] 26일 화요일 %0a 19시 인원 달라짐 확인 요망!!");
-							peopleCnt_19 = peopleCnt;
+						if (peopleCnt > peopleCnt_19) {
+							telegramAlert("[2.1] 26일 화요일 %0a19시 인원 달라짐 %28"+peopleCnt_19+" -%3E "+peopleCnt+"%29 확인 요망!!");
 						}
+						peopleCnt_19 = peopleCnt;
 
 					}
 					waitforit();
-					if (time.findElement(By.className("time")).getText().equals("22:10")) {
-						scanOver = true;
-						int peopleCnt = Integer
-								.parseInt(time.findElement(By.className("chair")).getText().replaceAll("[^0-9]", ""));
-						System.out.println(peopleCnt);
-						if (peopleCnt != peopleCnt_22) {
-							telegramAlert("[2.2] 26일 화요일 %0a 22시 인원 달라짐 확인 요망!!");
-							peopleCnt_22 = peopleCnt;
-						}
-					}
+//					if (time.findElement(By.className("time")).getText().equals("22:10")) {
+//						scanOver = true;
+//						int peopleCnt = Integer
+//								.parseInt(time.findElement(By.className("chair")).getText().replaceAll("[^0-9]", ""));
+//						System.out.println(peopleCnt);
+//						if (peopleCnt > peopleCnt_22) {
+//							telegramAlert("[2.2] 26일 화요일 %0a22시 인원 달라짐%28"+peopleCnt_22+" -%3E "+peopleCnt+"%29 확인 요망!!");
+//						}
+//						peopleCnt_22 = peopleCnt;
+//					}
 					if (scanOver)
 						break;
 				}
